@@ -4,7 +4,7 @@
 
 #define THETA_TO_STEP 1
 
-Flybot::Flybot(){//:ArdUnixBase("flybot"){
+Flybot::Flybot():ArdUnixBase("flybot"){
 	bStopSwitch = 10;
 	gStopSwitch = 9;
 	//y -- motor1
@@ -24,8 +24,8 @@ Flybot::Flybot(){//:ArdUnixBase("flybot"){
 	step1 = step2 = stepB = 0;
 }
 
-Flybot::Flybot( char b, char g, char m1, char md1, char m2, char md2, char mb, char mdb ){
-//ArdUnixBase("flybot"){
+Flybot::Flybot( char b, char g, char m1, char md1, char m2, char md2, char mb, char mdb ):
+ArdUnixBase("flybot"){
 
 }
 
@@ -42,7 +42,7 @@ void Flybot::init(){
 }
 
 bool Flybot::moveBaseTo( float theta ){
-	moveMotorTo( motorB, theta * THETA_TO_STEP );
+	return moveMotorTo( motorB, theta * THETA_TO_STEP );
 }
 bool Flybot::moveHandTo( float x, float y ){
 	float l1 = FLYBOT_LEN1;
@@ -69,28 +69,54 @@ void Flybot::aStep( int pin, int steps ){
 		delay(10);
 	}
 }
+bool Flybot::moveMotor( int motor, int step ){
+	switch(motor){
+		case MOTOR1:
+			if( step + step1 < 0 ) return false;
+			digitalWrite( motor1, step > 0 ? HIGH : LOW ); 
+			aStep( motor1, abs( step ) );
+			step1 += step;
+			return true;
+		case MOTOR2:
+			if( step + step2 < 0 ) return false;
+			digitalWrite( motor2, step > 0 ? HIGH : LOW ); 
+			aStep( motor2, abs( step ) );
+			step2 += step;
+			return true;
+		case MOTORB: 
+			if( step + stepB < 0 ) return false;
+			digitalWrite( motorB, step > 0 ? HIGH : LOW ); 
+			aStep( motorB, abs( step ) );
+			stepB += step;
+			return true;
+	}
+	return false;
+}
 bool Flybot::moveMotorTo( int motor, int step ){
 	if( step < 0 )
 		return false;
 	switch(motor){
-		case MOTOR1:
-			digitalWrite( motor1, step > step1 ? HIGH : LOW ); 
-			aStep( motor1, abs( step - step1 ) );
-			step1 = step;
-			return true;
-		case MOTOR2:
-			digitalWrite( motor2, step > step2 ? HIGH : LOW ); 
-			aStep( motor2, abs( step - step2 ) );
-			step2 = step;
-			return true;
-		case MOTORB: 
-			digitalWrite( motorB, step > stepB ? HIGH : LOW ); 
-			aStep( motorB, abs( step - stepB ) );
-			stepB = step;
-			return true;
+		case MOTOR1: return moveMotor( step - step1 );
+		case MOTOR2: return moveMotor( step - step2 );
+		case MOTORB: return moveMotor( step - stepB );
 	}
 	return false;
 }
 bool Flybot::moveTo( float x, float y, float theta ){
 	return moveHandTo( x, y ) && moveBaseTo( theta );
+}
+
+void Flybot::update( String updStr ){
+	String cmd = Console.strSplict( updStr );
+	if( cmd == "-forward-1" ) moveMotor( MOTOR1,  100 );
+	if( cmd == "-back-1" )    moveMotor( MOTOR1, -100 );
+
+	if( cmd == "-forward-2" ) moveMotor( MOTOR2,  100 );
+	if( cmd == "-back-2" )    moveMotor( MOTOR2, -100 );
+
+	if( cmd == "-forward-b" ) moveMotor( MOTORB,  100 );
+	if( cmd == "-back-b" )    moveMotor( MOTORB, -100 );
+}
+void Flybot::updateRaw( String updStr ){
+
 }

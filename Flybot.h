@@ -11,9 +11,9 @@
 #define MOTORB 2
 
 //#include <Arduino.h>
-//#include <ArdUnixBase.h>
+#include <ArdUnix.h>
 
-class Flybot{
+class Flybot:ArdUnixBase{
 private:
 	char bStopSwitch;
 	char gStopSwitch;
@@ -24,7 +24,7 @@ private:
 
 	int step1, step2, stepB;
 public:
-  Flybot();
+	Flybot();
 	Flybot( char b, char g, char m1, char md1, char m2, char md2, char mb, char mdb );
 
   void init();
@@ -35,6 +35,9 @@ public:
 
 	void aStep( int pin, int steps );
 	bool moveMotorTo( int motor, int step );
+
+	virtual void update( String updStr );
+	virtual void updateRaw( String updStr );
 };
 
 #endif
