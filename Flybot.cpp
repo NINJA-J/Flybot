@@ -4,7 +4,7 @@
 
 #define THETA_TO_STEP 1
 
-Flybot::Flybot():ArdUnixBase("flybot"){
+Flybot::Flybot(){
 	bStopSwitch = 10;
 	gStopSwitch = 9;
 	//y -- motor1
@@ -19,13 +19,13 @@ Flybot::Flybot():ArdUnixBase("flybot"){
 	motorB = 6;
 	motorDirB = 7;
 
-  motorEna = 8;
+	motorEna = 8;
 
-	step1 = step2 = stepB = 0;
+	step1 = step2 = 15;
+	stepB = 0;
 }
 
-Flybot::Flybot( char b, char g, char m1, char md1, char m2, char md2, char mb, char mdb ):
-ArdUnixBase("flybot"){
+Flybot::Flybot( char b, char g, char m1, char md1, char m2, char md2, char mb, char mdb ){
 
 }
 
@@ -96,9 +96,9 @@ bool Flybot::moveMotorTo( int motor, int step ){
 	if( step < 0 )
 		return false;
 	switch(motor){
-		case MOTOR1: return moveMotor( step - step1 );
-		case MOTOR2: return moveMotor( step - step2 );
-		case MOTORB: return moveMotor( step - stepB );
+		case MOTOR1: return moveMotor( motor, step - step1 );
+		case MOTOR2: return moveMotor( motor, step - step2 );
+		case MOTORB: return moveMotor( motor, step - stepB );
 	}
 	return false;
 }
@@ -106,17 +106,17 @@ bool Flybot::moveTo( float x, float y, float theta ){
 	return moveHandTo( x, y ) && moveBaseTo( theta );
 }
 
-void Flybot::update( String updStr ){
-	String cmd = Console.strSplict( updStr );
-	if( cmd == "-forward-1" ) moveMotor( MOTOR1,  100 );
-	if( cmd == "-back-1" )    moveMotor( MOTOR1, -100 );
+// void Flybot::update( String updStr ){
+// 	String cmd = Console.strSplict( updStr );
+// 	if( cmd == "-forward-1" ) moveMotor( MOTOR1,  100 );
+// 	if( cmd == "-back-1" )    moveMotor( MOTOR1, -100 );
 
-	if( cmd == "-forward-2" ) moveMotor( MOTOR2,  100 );
-	if( cmd == "-back-2" )    moveMotor( MOTOR2, -100 );
+// 	if( cmd == "-forward-2" ) moveMotor( MOTOR2,  100 );
+// 	if( cmd == "-back-2" )    moveMotor( MOTOR2, -100 );
 
-	if( cmd == "-forward-b" ) moveMotor( MOTORB,  100 );
-	if( cmd == "-back-b" )    moveMotor( MOTORB, -100 );
-}
-void Flybot::updateRaw( String updStr ){
+// 	if( cmd == "-forward-b" ) moveMotor( MOTORB,  100 );
+// 	if( cmd == "-back-b" )    moveMotor( MOTORB, -100 );
+// }
+// void Flybot::updateRaw( String updStr ){
 
-}
+// }
