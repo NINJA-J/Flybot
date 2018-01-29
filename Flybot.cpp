@@ -1,7 +1,7 @@
 #include "Flybot.h"
 #include <math.h>
 #include <Arduino.h>
-//adding on master branch
+
 #define THETA_TO_STEP 1
 
 Flybot::Flybot(){
